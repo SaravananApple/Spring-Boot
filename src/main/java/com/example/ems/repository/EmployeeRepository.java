@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.example.ems.model.Employee;
 
-public interface EmployeeRepository extends CrudRepository<Employee, Integer>
+public interface EmployeeRepository extends JpaRepository<Employee, Integer>
 {
 
 }

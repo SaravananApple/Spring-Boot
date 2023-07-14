@@ -18,13 +18,14 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000/")
 public class HomeRestController 
 {
 
 	@Autowired
 	private EmployeeService empService;
 	
-	@CrossOrigin(origins = "http://localhost:4200/")
+	
 	@GetMapping("/employees")
 	public List <Employee> allEmployees()
 	{
@@ -49,12 +50,31 @@ public class HomeRestController
 //	}
 //	
 	
-	
+
 @PostMapping("/employee")
-public Employee addEmployee( Employee emp)
+public Employee addEmployee( @RequestBody Employee employee)
+{
+	Optional<Employee> opt = empService.searchEmployee(employee.getEmpId());
+	if(opt.isEmpty())
+	{
+		empService.addEmployee(employee);
+		
+		return employee;
+	}
+	else
+	{
+	
+		return null;
+	}
+
+}
+
+
+@PutMapping("/employee")
+public Employee updateEmployee(  Employee emp)
 {
 	Optional<Employee> opt = empService.searchEmployee(emp.getEmpId());
-	if(opt.isEmpty())
+	if(opt.isPresent())
 	{
 		empService.addEmployee(emp);
 		return emp;
@@ -67,8 +87,9 @@ public Employee addEmployee( Employee emp)
 
 }
 
-@PutMapping("/employee")
-public Employee updateEmployee( Employee emp)
+//For React Call to update the data from React.
+@PutMapping("/employee/{id}")
+public Employee updateEmployee(@PathVariable long id, @RequestBody Employee emp)
 {
 	Optional<Employee> opt = empService.searchEmployee(emp.getEmpId());
 	if(opt.isPresent())
@@ -92,6 +113,7 @@ public Optional<Employee> deleteEmployee(@PathVariable("id") int eId)
 	if(opt.isPresent())
 	{
 		empService.deleteEmployee(eId);
+		
 		return opt;
 	}
 	else
